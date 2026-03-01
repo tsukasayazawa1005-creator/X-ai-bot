@@ -8,6 +8,11 @@ on:
 
   # 手動でも実行可能（テスト・緊急投稿用）
   workflow_dispatch:
+    inputs:
+      skip_delay:
+        description: "遅延をスキップ (テスト用)"
+        required: false
+        default: "true"
 
 jobs:
   tweet:
@@ -35,4 +40,5 @@ jobs:
           X_API_SECRET:          ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN:        ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          SKIP_DELAY:            ${{ github.event.inputs.skip_delay }}
         run: python tweet_bot.py

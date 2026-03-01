@@ -133,7 +133,7 @@ def generate_tweet(article: dict) -> tuple[str, str]:
 ツイート本文のみを出力してください（説明・前置き・引用符は不要）。"""
 
     response = client.models.generate_content(
-        model="gemini-1.5-flash",
+        model="gemini-2.0-flash",
         contents=prompt,
     )
     tweet_text = response.text.strip()
@@ -165,10 +165,11 @@ def post_tweet(tweet_text: str, url: str = "") -> dict:
 # ── メイン処理 ────────────────────────────────────────────────
 def main():
     # 人間らしさを演出するためにランダムに遅延（0〜20分）
-    # GitHub Actions で毎日 9:00 JST 実行 → 実際には 9:00〜9:20 の間にランダム投稿
-    delay_sec = random.randint(0, 20 * 60)
-    print(f"[WAIT] {delay_sec // 60}分{delay_sec % 60}秒待機してから投稿します...")
-    time.sleep(delay_sec)
+    # テスト時は SKIP_DELAY=1 で無効化できる
+    if not os.environ.get("SKIP_DELAY"):
+        delay_sec = random.randint(0, 20 * 60)
+        print(f"[WAIT] {delay_sec // 60}分{delay_sec % 60}秒待機してから投稿します...")
+        time.sleep(delay_sec)
 
     # ニュースを取得
     print("[FETCH] AI ニュースを取得中...")
