@@ -3,7 +3,7 @@ import random
 import time
 import requests
 import tweepy
-import google.generativeai as genai
+from google import genai
 from datetime import datetime, timedelta
 
 # ── 環境変数から設定を読み込む ──────────────────────────────────
@@ -77,8 +77,7 @@ def fetch_ai_news() -> list[dict]:
 # ── ツイート文生成 ────────────────────────────────────────────
 def generate_tweet(article: dict) -> tuple[str, str]:
     """Gemini API を使って人間らしいツイート文を生成する"""
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    client = genai.Client(api_key=GEMINI_API_KEY)
 
     title       = article.get("title", "")
     description = article.get("description", "")
@@ -133,7 +132,10 @@ def generate_tweet(article: dict) -> tuple[str, str]:
 
 ツイート本文のみを出力してください（説明・前置き・引用符は不要）。"""
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model="gemini-1.5-flash",
+        contents=prompt,
+    )
     tweet_text = response.text.strip()
     return tweet_text, article_url
 
