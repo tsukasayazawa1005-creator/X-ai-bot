@@ -1,0 +1,38 @@
+name: Daily AI Tweet
+
+on:
+  # 毎日 9:00 JST (00:00 UTC) に実行
+  # スクリプト内でさらに 0〜20分のランダム遅延を入れるため、実際の投稿は 9:00〜9:20 JST
+  schedule:
+    - cron: "0 0 * * *"
+
+  # 手動でも実行可能（テスト・緊急投稿用）
+  workflow_dispatch:
+
+jobs:
+  tweet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35  # ランダム遅延 20 分 + 処理時間を考慮
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tweet bot
+        env:
+          NEWS_API_KEY:          ${{ secrets.NEWS_API_KEY }}
+          GEMINI_API_KEY:        ${{ secrets.GEMINI_API_KEY }}
+          X_API_KEY:             ${{ secrets.X_API_KEY }}
+          X_API_SECRET:          ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN:        ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: python tweet_bot.py
