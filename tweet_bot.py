@@ -78,7 +78,7 @@ def fetch_ai_news() -> list[dict]:
 def generate_tweet(article: dict) -> tuple[str, str]:
     """Gemini API を使って人間らしいツイート文を生成する"""
     genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-2.0-flash")
+    model = genai.GenerativeModel("gemini-1.5-flash")
 
     title       = article.get("title", "")
     description = article.get("description", "")
